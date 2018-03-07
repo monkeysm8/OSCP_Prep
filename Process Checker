@@ -1,0 +1,22 @@
+#This script checks for new processes that are run
+#It's great to see if anything scheduled is called
+#!/bin/bash
+
+IFS=$'\n'
+
+old_ps=$(ps -eo user,uid,command)
+
+while true; do
+        new_ps=$(ps -eo user,uid,command)
+        changes=$(diff <(echo "$old_ps") <(echo "$new_ps") | grep [\<\>])
+        if [[ "$changes" != "" ]]; then
+                echo "[$(date +'%T')]"
+                diff <(echo "$old_ps") <(echo "$new_ps") | grep [\<\>]
+        fi
+
+        #diff <(echo "$old_ps") <(echo "$new_ps") | grep [\<\>]
+        #echo "newline"
+
+        old_ps=$new_ps
+        sleep 0.2
+done
